@@ -18,7 +18,6 @@ import { IParsedChatRequest } from 'vs/workbench/contrib/chat/common/chatParserT
 import { ChatAgentVoteDirection, IChatCommandButton, IChatConfirmation, IChatContentReference, IChatFollowup, IChatProgressMessage, IChatResponseErrorDetails, IChatResponseProgressFileTreeData, IChatTask, IChatUsedContext, IChatWarningMessage } from 'vs/workbench/contrib/chat/common/chatService';
 import { countWords } from 'vs/workbench/contrib/chat/common/chatWordCounter';
 import { CodeBlockModelCollection } from './codeBlockModelCollection';
-import { IMarkdownString } from 'vs/base/common/htmlContent';
 
 export function isRequestVM(item: unknown): item is IChatRequestViewModel {
 	return !!item && typeof item === 'object' && 'message' in item;
