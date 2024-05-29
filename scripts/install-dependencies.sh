@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
-git submodule update --recursive --remote
+# Install dependencies for the submodule
+./extensions/pearai-submodule/scripts/install-dependencies.sh
+if [ $? -ne 0 ]; then
+  echo "Failed to install dependencies for the submodule"
+  echo "Dependencies installation did not succeed."
+  exit 1
+fi
 
-# Ensure submodule is up to date on main
-cd extensions/pearai-submodule
-git pull origin main
-git checkout main
-./scripts/install-dependencies.sh
-cd ..
-
-# install dependencies
+# Install dependencies using yarn
 yarn install
+if [ $? -ne 0 ]; then
+  echo "Failed to install dependencies with yarn"
+  echo "Dependencies installation did not succeed."
+  exit 1
+fi
+
+# Success message
+echo "Dependencies Installed Successfully! ⭐"
