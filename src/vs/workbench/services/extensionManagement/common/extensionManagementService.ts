@@ -5,8 +5,9 @@
 
 import { Emitter, Event, EventMultiplexer } from 'vs/base/common/event';
 import {
-	ILocalExtension, IGalleryExtension, IExtensionIdentifier, IExtensionsControlManifest, IExtensionGalleryService, InstallOptions, UninstallOptions, InstallExtensionResult, ExtensionManagementError, ExtensionManagementErrorCode, Metadata, InstallOperation, EXTENSION_INSTALL_SYNC_CONTEXT, InstallExtensionInfo,
-	IProductVersion
+	ILocalExtension, IGalleryExtension, IExtensionIdentifier, IExtensionsControlManifest, IExtensionGalleryService, InstallOptions, UninstallOptions, InstallExtensionResult, ExtensionManagementError, ExtensionManagementErrorCode, Metadata, InstallOperation, EXTENSION_INSTALL_SOURCE_CONTEXT, InstallExtensionInfo,
+	IProductVersion,
+	ExtensionInstallSource
 } from 'vs/platform/extensionManagement/common/extensionManagement';
 import { DidChangeProfileForServerEvent, DidUninstallExtensionOnServerEvent, IExtensionManagementServer, IExtensionManagementServerService, InstallExtensionOnServerEvent, IResourceExtension, IWorkbenchExtensionManagementService, UninstallExtensionOnServerEvent } from 'vs/workbench/services/extensionManagement/common/extensionManagement';
 import { ExtensionType, isLanguagePackExtension, IExtensionManifest, getWorkspaceSupportTypeMessage, TargetPlatform } from 'vs/platform/extensions/common/extensions';
@@ -39,8 +40,13 @@ import { IStorageService, StorageScope, StorageTarget } from 'vs/platform/storag
 import { IUriIdentityService } from 'vs/platform/uriIdentity/common/uriIdentity';
 import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
 
+<<<<<<< HEAD
 function isResourceExtension(extension: any): extension is IResourceExtension {
 	return extension && !!(extension as IResourceExtension).manifest;
+=======
+function isGalleryExtension(extension: IResourceExtension | IGalleryExtension): extension is IGalleryExtension {
+	return extension.type === 'gallery';
+>>>>>>> fd11ed87fdf1f8e46575e027644406f51f0666f6
 }
 
 export class ExtensionManagementService extends Disposable implements IWorkbenchExtensionManagementService {
@@ -320,10 +326,17 @@ export class ExtensionManagementService extends Disposable implements IWorkbench
 	}
 
 	async canInstall(extension: IGalleryExtension | IResourceExtension): Promise<boolean> {
+<<<<<<< HEAD
 		if (isResourceExtension(extension)) {
 			return this.canInstallResourceExtension(extension);
 		}
 		return this.canInstallGalleryExtension(extension);
+=======
+		if (isGalleryExtension(extension)) {
+			return this.canInstallGalleryExtension(extension);
+		}
+		return this.canInstallResourceExtension(extension);
+>>>>>>> fd11ed87fdf1f8e46575e027644406f51f0666f6
 	}
 
 	private async canInstallGalleryExtension(gallery: IGalleryExtension): Promise<boolean> {
@@ -435,6 +448,7 @@ export class ExtensionManagementService extends Disposable implements IWorkbench
 			const workspaceExtension = await this.workspaceExtensionManagementService.toLocalWorkspaceExtension(scannedExtension);
 			if (workspaceExtension) {
 				result.push({
+					type: 'resource',
 					identifier: workspaceExtension.identifier,
 					location: workspaceExtension.location,
 					manifest: workspaceExtension.manifest,
@@ -444,6 +458,10 @@ export class ExtensionManagementService extends Disposable implements IWorkbench
 			}
 		}));
 		return result;
+	}
+
+	getInstalledWorkspaceExtensionLocations(): URI[] {
+		return this.workspaceExtensionManagementService.getInstalledWorkspaceExtensionsLocations();
 	}
 
 	async getInstalledWorkspaceExtensions(includeInvalid: boolean): Promise<ILocalExtension[]> {
@@ -565,7 +583,7 @@ export class ExtensionManagementService extends Disposable implements IWorkbench
 			throw error;
 		}
 
-		if (!installOptions?.context?.[EXTENSION_INSTALL_SYNC_CONTEXT]) {
+		if (installOptions?.context?.[EXTENSION_INSTALL_SOURCE_CONTEXT] !== ExtensionInstallSource.SETTINGS_SYNC) {
 			await this.checkForWorkspaceTrust(manifest, false);
 		}
 
@@ -835,7 +853,7 @@ class WorkspaceExtensionsManagementService extends Disposable {
 	}
 
 	private async initialize(): Promise<void> {
-		const existingLocations = this.getWorkspaceExtensionsLocations();
+		const existingLocations = this.getInstalledWorkspaceExtensionsLocations();
 		if (!existingLocations.length) {
 			return;
 		}
@@ -941,7 +959,7 @@ class WorkspaceExtensionsManagementService extends Disposable {
 		}>('workspaceextension:uninstall');
 	}
 
-	private getWorkspaceExtensionsLocations(): URI[] {
+	getInstalledWorkspaceExtensionsLocations(): URI[] {
 		const locations: URI[] = [];
 		try {
 			const parsed = JSON.parse(this.storageService.get(WorkspaceExtensionsManagementService.WORKSPACE_EXTENSIONS_KEY, StorageScope.WORKSPACE, '[]'));
