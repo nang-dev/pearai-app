@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Update submodules
-git submodule update --recursive --remote
+git submodule init
+git submodule update --recursive
 if [ $? -ne 0 ]; then
   echo "Failed to update submodules"
   echo "Fresh installation did not succeed."
@@ -30,15 +31,16 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-cd ..
+cd ../../
 if [ $? -ne 0 ]; then
   echo "Failed to change directory back to the root"
   echo "Fresh installation did not succeed."
   exit 1
 fi
 
+pwd
 # Run the install dependencies script
-./install-dependencies.sh
+./scripts/install-dependencies.sh
 if [ $? -ne 0 ]; then
   echo "Failed to install dependencies"
   echo "Fresh installation did not succeed."
