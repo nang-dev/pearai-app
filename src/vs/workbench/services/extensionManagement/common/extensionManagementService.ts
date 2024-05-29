@@ -40,13 +40,8 @@ import { IStorageService, StorageScope, StorageTarget } from 'vs/platform/storag
 import { IUriIdentityService } from 'vs/platform/uriIdentity/common/uriIdentity';
 import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
 
-<<<<<<< HEAD
-function isResourceExtension(extension: any): extension is IResourceExtension {
-	return extension && !!(extension as IResourceExtension).manifest;
-=======
 function isGalleryExtension(extension: IResourceExtension | IGalleryExtension): extension is IGalleryExtension {
 	return extension.type === 'gallery';
->>>>>>> fd11ed87fdf1f8e46575e027644406f51f0666f6
 }
 
 export class ExtensionManagementService extends Disposable implements IWorkbenchExtensionManagementService {
@@ -326,17 +321,10 @@ export class ExtensionManagementService extends Disposable implements IWorkbench
 	}
 
 	async canInstall(extension: IGalleryExtension | IResourceExtension): Promise<boolean> {
-<<<<<<< HEAD
-		if (isResourceExtension(extension)) {
-			return this.canInstallResourceExtension(extension);
-		}
-		return this.canInstallGalleryExtension(extension);
-=======
 		if (isGalleryExtension(extension)) {
 			return this.canInstallGalleryExtension(extension);
 		}
 		return this.canInstallResourceExtension(extension);
->>>>>>> fd11ed87fdf1f8e46575e027644406f51f0666f6
 	}
 
 	private async canInstallGalleryExtension(gallery: IGalleryExtension): Promise<boolean> {
