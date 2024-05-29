@@ -1,4 +1,0 @@
-**/*.run.xml
-archive/**/*
-extensions/vscode/models/**/*
-docs/docs/languages
